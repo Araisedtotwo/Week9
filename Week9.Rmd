@@ -1,0 +1,45 @@
+---
+title: "Week9"
+author: "Arushi Arora"
+date: "10/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Introduction
+
+This RMD connects to the New York Times 'Movie Reviews' API, constructs an interface in R to read in the JSON data, and transforms it into an R DataFrame.
+
+
+```{r warning=FALSE}
+if(!require('jsonlite'))install.packages('jsonlite')
+if(!require('dplyr'))install.packages('dplyr')
+```
+
+### Connect to the 'Movie Reviews' API using token
+The following syntax only pulls in data on movies that contain the word 'big' between the decade of 1st Jan 1980 and 1st Jan 1990
+
+```{r warning=FALSE}
+movies <- fromJSON("https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=big&opening-date=1980-01-01;1990-01-01&api-key=R3MsITKqKA4qKsCAO3RVj86KS48YoNTJ", flatten = TRUE) %>% data.frame()
+```
+
+### Convert to dataframe
+
+
+```{r warning=FALSE}
+movie_filter <- movies %>% select (results.display_title, results.mpaa_rating, results.opening_date) %>% head(20)
+(movie_filter)
+
+```
+
+### Filter out the movies that had an "R" rating in the list
+
+```{r warning=FALSE}
+movie_filter %>% filter(results.mpaa_rating== "R")
+```
+
+### Conclusion
+9 out of 16 movies that the API returned with the word 'big' in their title were rated 'R'
